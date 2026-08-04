@@ -336,3 +336,67 @@ body {
   height: 100%;
   object-fit: cover;
 }
+
+@media (max-width: 560px) {
+  body {
+    padding: 10px;
+  }
+
+  .game-container {
+    padding: 14px;
+    border-radius: 14px;
+  }
+
+  .game-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .title-block h1 {
+    font-size: 18px;
+  }
+
+  .header-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .boost-btn,
+  .help-btn {
+    flex: 1;
+    justify-content: center;
+    padding: 9px 10px;
+    font-size: 12px;
+  }
+
+  .boost-hint {
+    max-width: 100%;
+    white-space: normal;
+  }
+
+  .timer-row {
+    font-size: 11px;
+    flex-wrap: wrap;
+  }
+
+  .word-list {
+    gap: 6px;
+  }
+
+  .chip {
+    font-size: 12px;
+    padding: 5px 10px;
+  }
+}
+
+@media (max-width: 360px) {
+  .boost-label,
+  .help-label {
+    font-size: 11px;
+  }
+
+  .title-block h1 {
+    font-size: 16px;
+  }
+}
