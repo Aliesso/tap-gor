@@ -1,0 +1,338 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(160deg, #1e1b3a, #2d1b4e 60%, #1a1030);
+  font-family: "Segoe UI", system-ui, sans-serif;
+  color: #f2eeff;
+  padding: 24px;
+}
+
+.game-container {
+  width: 100%;
+  max-width: 680px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 18px;
+  padding: 20px;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+}
+
+.game-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.title-block h1 {
+  font-size: 20px;
+  margin: 0;
+}
+
+.level-name {
+  margin: 2px 0 0;
+  font-size: 13px;
+  opacity: 0.7;
+}
+
+.lives {
+  margin: 4px 0 0;
+  font-size: 15px;
+  letter-spacing: 2px;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.boost-btn,
+.help-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: none;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.boost-btn {
+  background: linear-gradient(135deg, #ffb347, #ff7b54);
+  color: #2b1400;
+}
+
+.help-btn {
+  background: linear-gradient(135deg, #7ec8ff, #4f8fff);
+  color: #061a3d;
+}
+
+.boost-btn:hover:not(:disabled),
+.help-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+.boost-btn:disabled,
+.help-btn:disabled {
+  background: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.5);
+  cursor: not-allowed;
+  transform: none;
+}
+
+.boost-hint {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #241a3d;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 5;
+  animation: hintBounce 1.2s ease infinite;
+}
+
+.boost-hint[hidden] {
+  display: none;
+}
+
+.boost-hint::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  right: 22px;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 6px solid #241a3d;
+}
+
+.boost-hint-arrow {
+  font-size: 16px;
+}
+
+@keyframes hintBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+.timer-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  opacity: 0.85;
+  margin-bottom: 14px;
+}
+
+.timer-bar-track {
+  flex: 1;
+  height: 6px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+}
+
+.timer-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #7ee787, #ffcc4d, #ff5f5f);
+  transition: width 1s linear;
+}
+
+.scene-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.scene {
+  position: absolute;
+  inset: 0;
+}
+
+.scene-bg {
+  position: absolute;
+  inset: 0;
+}
+
+.room-bg {
+  background: url("images/room.jpg") center / cover no-repeat;
+}
+
+.obj {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-size: 34px;
+  cursor: default;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+  transition: transform 0.15s ease, filter 0.3s ease;
+  user-select: none;
+  z-index: 2;
+}
+
+.obj:hover {
+  transform: translate(-50%, -50%) scale(1.15);
+}
+
+.obj.found-object {
+  pointer-events: none;
+  animation: foundPop 0.5s ease forwards;
+}
+
+.obj.spot {
+  font-size: 22px;
+  filter: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.obj.spot::after {
+  content: "";
+}
+
+.obj.spot.found-object::after {
+  content: "✅";
+}
+
+.obj.spot.hint-reveal {
+  border-radius: 50%;
+  box-shadow: 0 0 0 3px #ffd166, 0 0 18px 6px rgba(255, 209, 102, 0.85);
+  animation: hintGlow 0.6s ease-in-out infinite alternate;
+}
+
+@keyframes hintGlow {
+  from { box-shadow: 0 0 0 3px #ffd166, 0 0 12px 4px rgba(255, 209, 102, 0.6); }
+  to { box-shadow: 0 0 0 3px #ffd166, 0 0 22px 8px rgba(255, 209, 102, 0.95); }
+}
+
+@keyframes foundPop {
+  0% { transform: translate(-50%, -50%) scale(1.3); filter: drop-shadow(0 0 10px #7ee787); }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+}
+
+.scene-wrapper.shake {
+  animation: puzzleShake 0.4s ease;
+}
+
+@keyframes puzzleShake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-8px); }
+  40% { transform: translateX(8px); }
+  60% { transform: translateX(-6px); }
+  80% { transform: translateX(6px); }
+}
+
+.darkness-overlay {
+  position: absolute;
+  inset: 0;
+  background: #000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1s ease;
+  z-index: 3;
+}
+
+.word-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.chip {
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  font-size: 13px;
+  transition: all 0.2s ease;
+}
+
+.chip.found {
+  background: rgba(126, 231, 135, 0.18);
+  border-color: #7ee787;
+  color: #7ee787;
+  text-decoration: line-through;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.modal-overlay[hidden] {
+  display: none;
+}
+
+.modal-box {
+  background: #241a3d;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 14px;
+  padding: 28px;
+  text-align: center;
+  max-width: 320px;
+}
+
+.modal-box h2 {
+  margin-top: 0;
+}
+
+.modal-btn {
+  margin-top: 14px;
+  padding: 10px 22px;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(135deg, #7ee787, #4fb35d);
+  color: #072b0c;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.jumpscare-overlay {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+}
+
+.jumpscare-overlay[hidden] {
+  display: none;
+}
+
+.jumpscare-gif {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
