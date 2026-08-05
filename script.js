@@ -1,6 +1,6 @@
 import { auth, db } from "./firebase-config.js";
 import { onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
-import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+import { doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
 const DARKEN_INTERVAL_SECONDS = 7;
 const DARKEN_STEP = 0.2;
@@ -112,7 +112,12 @@ let currentUser = null;
 async function saveScore(elapsedSeconds) {
   if (!currentUser) return;
   try {
-    await addDoc(collection(db, "scores"), {
+    const scoreRef = doc(db, "scores", currentUser.uid);
+    const existing = await getDoc(scoreRef);
+    if (existing.exists() && existing.data().timeSeconds <= elapsedSeconds) {
+      return;
+    }
+    await setDoc(scoreRef, {
       uid: currentUser.uid,
       name: currentUser.displayName || "Anonim",
       timeSeconds: elapsedSeconds,
