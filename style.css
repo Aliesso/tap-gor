@@ -109,7 +109,8 @@ body {
 }
 
 .boost-btn,
-.help-btn {
+.help-btn,
+.start-btn {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -120,6 +121,21 @@ body {
   font-size: 14px;
   cursor: pointer;
   transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.boost-btn[hidden],
+.help-btn[hidden],
+.start-btn[hidden] {
+  display: none;
+}
+
+.start-btn {
+  background: linear-gradient(135deg, #7ee787, #4fb35d);
+  color: #072b0c;
+}
+
+.start-btn:hover {
+  transform: translateY(-2px);
 }
 
 .boost-btn {

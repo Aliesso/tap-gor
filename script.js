@@ -105,6 +105,7 @@ const el = {
   userName: document.getElementById("userName"),
   logoutBtn: document.getElementById("logoutBtn"),
   gameContainer: document.getElementById("gameContainer"),
+  startBtn: document.getElementById("startBtn"),
 };
 
 let currentUser = null;
@@ -327,7 +328,7 @@ function handleObjectClick(objEl) {
 }
 
 document.querySelector(".scene-wrapper").addEventListener("click", (e) => {
-  if (state.gameOver) return;
+  if (!gameStarted || state.gameOver) return;
   const objEl = e.target.closest(".obj");
   if (objEl) {
     handleObjectClick(objEl);
@@ -341,6 +342,18 @@ el.helpBtn.addEventListener("click", useHelp);
 el.logoutBtn.addEventListener("click", () => signOut(auth));
 
 let gameStarted = false;
+
+function startGame() {
+  if (gameStarted) return;
+  gameStarted = true;
+  el.startBtn.hidden = true;
+  el.helpBtn.hidden = false;
+  el.boostBtn.hidden = false;
+  initLevel(0);
+  setInterval(tick, 1000);
+}
+
+el.startBtn.addEventListener("click", startGame);
 
 async function ensureDisplayName(user) {
   await user.reload();
@@ -363,9 +376,4 @@ onAuthStateChanged(auth, async (user) => {
   el.userName.textContent = `👤 ${name}`;
   document.getElementById("authLoading").hidden = true;
   el.gameContainer.hidden = false;
-  if (!gameStarted) {
-    gameStarted = true;
-    initLevel(0);
-    setInterval(tick, 1000);
-  }
 });
