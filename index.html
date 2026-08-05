@@ -1,71 +1,76 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="az">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tap Gör</title>
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tap Gör</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <p class="auth-loading" id="authLoading">Yüklənir...</p>
 
-<div class="game-container">
+    <div class="game-container" id="gameContainer" hidden>
+      <div class="user-bar">
+        <span class="user-name" id="userName"></span>
+        <div class="user-bar-actions">
+          <a class="board-link" href="leaderboard.html">🏆 Reytinq</a>
+          <button class="logout-btn" id="logoutBtn">Çıxış</button>
+        </div>
+      </div>
 
-  <header class="game-header">
-    <div class="title-block">
-      <h1>🔍 Tap Gör</h1>
-      <p class="level-name" id="levelName">Otaq</p>
-      <p class="lives" id="lives"></p>
+      <header class="game-header">
+        <div class="title-block">
+          <h1>🔍 Tap Gör</h1>
+          <p class="level-name" id="levelName">Otaq</p>
+          <p class="lives" id="lives"></p>
+        </div>
+        <div class="header-actions">
+          <button id="helpBtn" class="help-btn">
+            <span class="help-icon">🆘</span>
+            <span class="help-label" id="helpLabel">Kömək (2)</span>
+          </button>
+          <button id="boostBtn" class="boost-btn">
+            <span class="boost-icon">🔆</span>
+            <span class="boost-label" id="boostLabel">Otağı Aydınlat</span>
+          </button>
+        </div>
+        <div class="boost-hint" id="boostHint" hidden>
+          <span class="boost-hint-arrow">👆</span>
+          <span>Aydınlatmaq üçün klikə!</span>
+        </div>
+      </header>
+
+      <div class="timer-row">
+        <span class="timer-text">Görmə məhdudiyyətinin azalmasına:</span>
+        <div class="timer-bar-track">
+          <div class="timer-bar-fill" id="timerFill"></div>
+        </div>
+        <span class="timer-seconds" id="timerSeconds">7s</span>
+      </div>
+
+      <div class="scene-wrapper">
+        <div class="scene" data-level="room" id="scene-room">
+          <div class="scene-bg room-bg"></div>
+
+          <div class="darkness-overlay"></div>
+        </div>
+      </div>
+
+      <div class="word-list" id="wordList"></div>
+
+      <div class="modal-overlay" id="modal" hidden>
+        <div class="modal-box">
+          <h2 id="modalTitle"></h2>
+          <p id="modalText"></p>
+          <button id="modalBtn" class="modal-btn"></button>
+        </div>
+      </div>
+
+      <div class="jumpscare-overlay" id="jumpscareOverlay" hidden>
+        <img src="images/download.gif" alt="" class="jumpscare-gif" />
+      </div>
     </div>
-    <div class="header-actions">
-      <button id="helpBtn" class="help-btn">
-        <span class="help-icon">🆘</span>
-        <span class="help-label" id="helpLabel">Kömək (2)</span>
-      </button>
-      <button id="boostBtn" class="boost-btn">
-        <span class="boost-icon">🔆</span>
-        <span class="boost-label" id="boostLabel">Otağı Aydınlat</span>
-      </button>
-    </div>
-    <div class="boost-hint" id="boostHint" hidden>
-      <span class="boost-hint-arrow">👆</span>
-      <span>Aydınlatmaq üçün klikə!</span>
-    </div>
-  </header>
 
-  <div class="timer-row">
-    <span class="timer-text">Görmə məhdudiyyətinin azalmasına:</span>
-    <div class="timer-bar-track">
-      <div class="timer-bar-fill" id="timerFill"></div>
-    </div>
-    <span class="timer-seconds" id="timerSeconds">7s</span>
-  </div>
-
-  <div class="scene-wrapper">
-
-    <div class="scene" data-level="room" id="scene-room">
-      <div class="scene-bg room-bg"></div>
-
-      <div class="darkness-overlay"></div>
-    </div>
-
-  </div>
-
-  <div class="word-list" id="wordList"></div>
-
-  <div class="modal-overlay" id="modal" hidden>
-    <div class="modal-box">
-      <h2 id="modalTitle"></h2>
-      <p id="modalText"></p>
-      <button id="modalBtn" class="modal-btn"></button>
-    </div>
-  </div>
-
-  <div class="jumpscare-overlay" id="jumpscareOverlay" hidden>
-    <img src="images/download.gif" alt="" class="jumpscare-gif">
-  </div>
-
-</div>
-
-<script src="script.js"></script>
-</body>
+    <script type="module" src="script.js"></script>
+  </body>
 </html>

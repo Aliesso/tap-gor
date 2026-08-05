@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="az">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tap Gör — Giriş</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="auth.css" />
+  </head>
+  <body>
+    <div class="auth-container">
+      <h1>🔍 Tap Gör</h1>
+
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tabLogin">Giriş</button>
+        <button class="auth-tab" id="tabRegister">Qeydiyyat</button>
+      </div>
+
+      <p class="auth-error" id="authError" hidden></p>
+
+      <form class="auth-form" id="loginForm">
+        <label>
+          E-poçt
+          <input type="email" id="loginEmail" required autocomplete="email" />
+        </label>
+        <label>
+          Parol
+          <input type="password" id="loginPassword" required autocomplete="current-password" minlength="6" />
+        </label>
+        <button type="submit" class="auth-submit">Daxil ol</button>
+      </form>
+
+      <form class="auth-form" id="registerForm" hidden>
+        <label>
+          İstifadəçi adı
+          <input type="text" id="registerName" required maxlength="24" autocomplete="nickname" />
+        </label>
+        <label>
+          E-poçt
+          <input type="email" id="registerEmail" required autocomplete="email" />
+        </label>
+        <label>
+          Parol
+          <input type="password" id="registerPassword" required autocomplete="new-password" minlength="6" />
+        </label>
+        <button type="submit" class="auth-submit">Qeydiyyatdan keç</button>
+      </form>
+    </div>
+
+    <script type="module" src="login.js"></script>
+  </body>
+</html>

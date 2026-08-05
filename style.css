@@ -14,6 +14,11 @@ body {
   padding: 24px;
 }
 
+.auth-loading {
+  opacity: 0.7;
+  font-size: 14px;
+}
+
 .game-container {
   width: 100%;
   max-width: 680px;
@@ -23,6 +28,52 @@ body {
   padding: 20px;
   backdrop-filter: blur(6px);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+}
+
+.user-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 13px;
+}
+
+.user-name {
+  opacity: 0.85;
+  font-weight: 600;
+}
+
+.user-bar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.board-link {
+  color: #7ec8ff;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.board-link:hover {
+  text-decoration: underline;
+}
+
+.logout-btn {
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.06);
+  color: #f2eeff;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.logout-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
 }
 
 .game-header {

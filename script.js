@@ -1,3 +1,7 @@
+import { auth, db } from "./firebase-config.js";
+import { onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
 const DARKEN_INTERVAL_SECONDS = 7;
 const DARKEN_STEP = 0.2;
 const BOOST_COOLDOWN_SECONDS = 20;
@@ -98,7 +102,26 @@ const el = {
   modalBtn: document.getElementById("modalBtn"),
   jumpscareOverlay: document.getElementById("jumpscareOverlay"),
   boostHint: document.getElementById("boostHint"),
+  userName: document.getElementById("userName"),
+  logoutBtn: document.getElementById("logoutBtn"),
+  gameContainer: document.getElementById("gameContainer"),
 };
+
+let currentUser = null;
+
+async function saveScore(elapsedSeconds) {
+  if (!currentUser) return;
+  try {
+    await addDoc(collection(db, "scores"), {
+      uid: currentUser.uid,
+      name: currentUser.displayName || "Anonim",
+      timeSeconds: elapsedSeconds,
+      createdAt: serverTimestamp(),
+    });
+  } catch (error) {
+    console.error("Skor saxlanılmadı:", error);
+  }
+}
 
 function currentSceneEl() {
   return document.getElementById(`scene-${levels[state.levelIndex].key}`);
@@ -134,6 +157,7 @@ function initLevel(index) {
   updateHelpButton();
   updateLivesUI();
   el.modal.hidden = true;
+  el.modalBtn.hidden = false;
   el.jumpscareOverlay.hidden = true;
   el.boostHint.hidden = true;
 }
@@ -250,18 +274,15 @@ function tick() {
   updateTimerUI();
 }
 
-function triggerWin() {
+async function triggerWin() {
   state.gameOver = true;
-  const isLastLevel = state.levelIndex === levels.length - 1;
   const elapsedSeconds = Math.floor((Date.now() - state.startTime) / 1000);
-  const timeText = `Vaxtın: ${formatDuration(elapsedSeconds)}`;
   el.modalTitle.textContent = "🎉 Tamamlandı!";
-  el.modalText.textContent = isLastLevel
-    ? `${timeText}.Bütün əşyaları tapdın.Yenidən başlamaq istəyirsən?`
-    : `${timeText}. Bütün əşyaları tapdın. Növbəti səviyyəyə keç!`;
-  el.modalBtn.textContent = isLastLevel ? "Yenidən başla" : "Növbəti səviyyə";
-  el.modalBtn.onclick = () => initLevel(isLastLevel ? 0 : state.levelIndex + 1);
+  el.modalText.textContent = `Vaxtın: ${formatDuration(elapsedSeconds)}. Reytinqə keçirilir...`;
+  el.modalBtn.hidden = true;
   el.modal.hidden = false;
+  await saveScore(elapsedSeconds);
+  window.location.href = "leaderboard.html";
 }
 
 function triggerGameOver() {
@@ -316,6 +337,34 @@ document.querySelector(".scene-wrapper").addEventListener("click", (e) => {
 
 el.boostBtn.addEventListener("click", useBoost);
 el.helpBtn.addEventListener("click", useHelp);
+el.logoutBtn.addEventListener("click", () => signOut(auth));
 
-initLevel(0);
-setInterval(tick, 1000);
+let gameStarted = false;
+
+async function ensureDisplayName(user) {
+  await user.reload();
+  if (user.displayName) return user.displayName;
+  let name = "";
+  while (!name) {
+    name = (window.prompt("Reytinqdə görünəcək adınızı daxil edin:") || "").trim();
+  }
+  await updateProfile(user, { displayName: name });
+  return name;
+}
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    window.location.href = "login.html";
+    return;
+  }
+  currentUser = user;
+  const name = await ensureDisplayName(user);
+  el.userName.textContent = `👤 ${name}`;
+  document.getElementById("authLoading").hidden = true;
+  el.gameContainer.hidden = false;
+  if (!gameStarted) {
+    gameStarted = true;
+    initLevel(0);
+    setInterval(tick, 1000);
+  }
+});
