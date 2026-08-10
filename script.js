@@ -106,7 +106,64 @@ const el = {
   logoutBtn: document.getElementById("logoutBtn"),
   gameContainer: document.getElementById("gameContainer"),
   startBtn: document.getElementById("startBtn"),
+  muteBtn: document.getElementById("muteBtn"),
 };
+
+let audioCtx = null;
+let muted = localStorage.getItem("tapgor-muted") === "true";
+
+function updateMuteButton() {
+  el.muteBtn.textContent = muted ? "🔇" : "🔊";
+}
+
+function getAudioCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === "suspended") audioCtx.resume();
+  return audioCtx;
+}
+
+function playTone(freq, duration, type = "sine", volume = 0.2, delay = 0) {
+  if (muted) return;
+  const ctx = getAudioCtx();
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = type;
+  osc.frequency.value = freq;
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  const startTime = ctx.currentTime + delay;
+  gain.gain.setValueAtTime(volume, startTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+  osc.start(startTime);
+  osc.stop(startTime + duration);
+}
+
+function playFoundSound() {
+  playTone(880, 0.12, "sine", 0.2);
+  playTone(1320, 0.12, "sine", 0.15, 0.08);
+}
+
+function playMissSound() {
+  playTone(160, 0.2, "sawtooth", 0.15);
+}
+
+function playWinSound() {
+  playTone(523.25, 0.15, "sine", 0.2, 0);
+  playTone(659.25, 0.15, "sine", 0.2, 0.15);
+  playTone(783.99, 0.3, "sine", 0.2, 0.3);
+}
+
+function playLoseSound() {
+  playTone(300, 0.2, "sawtooth", 0.15, 0);
+  playTone(220, 0.3, "sawtooth", 0.15, 0.15);
+}
+
+el.muteBtn.addEventListener("click", () => {
+  muted = !muted;
+  localStorage.setItem("tapgor-muted", String(muted));
+  updateMuteButton();
+});
+updateMuteButton();
 
 let currentUser = null;
 
@@ -199,6 +256,7 @@ function shakePuzzle() {
 
 function registerMiss() {
   if (state.gameOver) return;
+  playMissSound();
   state.lives--;
   updateLivesUI();
   shakePuzzle();
@@ -278,17 +336,19 @@ function tick() {
 
 async function triggerWin() {
   state.gameOver = true;
+  playWinSound();
   const elapsedSeconds = Math.floor((Date.now() - state.startTime) / 1000);
   el.modalTitle.textContent = "🎉 Tamamlandı!";
   el.modalText.textContent = `Vaxtın: ${formatDuration(elapsedSeconds)}. Reytinqə keçirilir...`;
   el.modalBtn.hidden = true;
   el.modal.hidden = false;
-  await saveScore(elapsedSeconds);
+  await Promise.all([saveScore(elapsedSeconds), new Promise((resolve) => setTimeout(resolve, 700))]);
   window.location.href = "leaderboard.html";
 }
 
 function triggerGameOver() {
   state.gameOver = true;
+  playLoseSound();
   el.modalTitle.textContent = "⏱️ Vaxt bitdi!";
   el.modalText.textContent = "Şəkil tam qaraldı. Yenidən cəhd et!";
   el.modalBtn.textContent = "Yenidən cəhd et";
@@ -298,6 +358,7 @@ function triggerGameOver() {
 
 function triggerLivesGameOver() {
   state.gameOver = true;
+  playLoseSound();
   el.jumpscareOverlay.hidden = false;
   setTimeout(() => {
     el.jumpscareOverlay.hidden = true;
@@ -318,6 +379,7 @@ function handleObjectClick(objEl) {
   const name = objEl.dataset.name;
   if (state.found.has(name)) return;
 
+  playFoundSound();
   state.found.add(name);
   objEl.classList.add("found-object");
   markWordFound(name);

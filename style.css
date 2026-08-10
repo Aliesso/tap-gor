@@ -76,6 +76,21 @@ body {
   background: rgba(255, 255, 255, 0.12);
 }
 
+.mute-btn {
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.06);
+  color: #f2eeff;
+  font-size: 13px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.mute-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
 .game-header {
   position: relative;
   display: flex;
