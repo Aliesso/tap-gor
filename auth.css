@@ -101,3 +101,28 @@
 .auth-error[hidden] {
   display: none;
 }
+
+.auth-info {
+  color: #7ee787;
+  font-size: 13px;
+  margin: 0 0 12px;
+}
+
+.auth-info[hidden] {
+  display: none;
+}
+
+.forgot-link {
+  margin-top: -6px;
+  background: none;
+  border: none;
+  color: #7ec8ff;
+  font-size: 12px;
+  cursor: pointer;
+  text-align: center;
+  padding: 4px 0 0;
+}
+
+.forgot-link:hover {
+  text-decoration: underline;
+}

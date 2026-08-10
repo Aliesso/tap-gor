@@ -2,6 +2,7 @@ import { auth } from "./firebase-config.js";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  sendPasswordResetEmail,
   updateProfile,
   onAuthStateChanged,
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
@@ -12,16 +13,27 @@ const el = {
   loginForm: document.getElementById("loginForm"),
   registerForm: document.getElementById("registerForm"),
   authError: document.getElementById("authError"),
+  authInfo: document.getElementById("authInfo"),
+  forgotBtn: document.getElementById("forgotBtn"),
 };
 
 function showError(message) {
+  el.authInfo.hidden = true;
   el.authError.textContent = message;
   el.authError.hidden = false;
+}
+
+function showInfo(message) {
+  el.authError.hidden = true;
+  el.authInfo.textContent = message;
+  el.authInfo.hidden = false;
 }
 
 function clearError() {
   el.authError.hidden = true;
   el.authError.textContent = "";
+  el.authInfo.hidden = true;
+  el.authInfo.textContent = "";
 }
 
 el.tabLogin.addEventListener("click", () => {
@@ -62,6 +74,23 @@ el.loginForm.addEventListener("submit", async (e) => {
   try {
     await signInWithEmailAndPassword(auth, email, password);
     window.location.href = "index.html";
+  } catch (error) {
+    showError(friendlyError(error));
+  }
+});
+
+el.forgotBtn.addEventListener("click", async () => {
+  clearError();
+  const email = document.getElementById("loginEmail").value.trim();
+
+  if (!email) {
+    showError("Şifrəni bərpa etmək üçün əvvəlcə e-poçt sahəsini doldurun.");
+    return;
+  }
+
+  try {
+    await sendPasswordResetEmail(auth, email);
+    showInfo("Şifrə bərpa linki e-poçtunuza göndərildi. Poçt qutunuzu (və spam qovluğunu) yoxlayın.");
   } catch (error) {
     showError(friendlyError(error));
   }
